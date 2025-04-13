@@ -12,11 +12,14 @@ It is made for low-level networking tools, systems experimentation, and custom d
 ---
 
 ## Features
-
-- **NetWatch**: Real-time network interface monitor with live packet stats and top host tracking.
 - **Ping Module**: Basic ICMP-based connectivity checks.
 - **Modular Architecture**: Easy to extend with your own tools and libraries.
 - **Custom Shell**: Built-in command parsing for embedded usage and command execution.
+- **NetWatch**: Real-time network interface monitor with live packet stats and top host tracking.
+
+Netwatch runnning on my machine:
+
+![image](https://github.com/user-attachments/assets/90d20eab-249b-4b66-8633-eb4a434d5fe5)
 
 ---
 
