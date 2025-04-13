@@ -2,11 +2,12 @@
 
 **Version**: Alpha 0.0.1  
 **Author**: Brian Riff  
-**Release Date**: April 10, 2025
+**Release Date**: April 12, 2025
 
 ---
 
-HOS is a lightweight Linux-based operating system framework for low-level networking tools, systems experimentation, and custom development environments. Currently in early alpha, HOS is modular and built for extensibility.
+HOS is a lightweight Linux-based operating system framework built in C.
+It is made for low-level networking tools, systems experimentation, and custom development environments. Currently in early alpha, HOS is modular and built for extensibility.
 
 ---
 
@@ -36,3 +37,9 @@ HOS is a lightweight Linux-based operating system framework for low-level networ
   Ping an host
 - **netwatch**:
   Watch a network interface
+
+## Running the OS
+- Compiling the OS:
+  source compile.sh
+- Running the OS:
+  source compile.sh run
