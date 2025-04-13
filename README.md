@@ -7,7 +7,7 @@
 ---
 
 HOS is a lightweight Linux-based operating system framework built in C.
-It is made for low-level networking tools, systems experimentation, and custom development environments. Currently in early alpha, HOS is modular and built for extensibility.
+It is made for hackers, and includes low-level networking tools, hashing, and more! Currently in early alpha, HOS is modular and built for extensibility.
 
 ---
 
