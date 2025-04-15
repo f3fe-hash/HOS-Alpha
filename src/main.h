@@ -8,7 +8,7 @@
 // HOS information
 #define HOS_VERSION "Alpha 0.0.1"
 #define __AUTHOR__          "Brian Riff"
-#define __RELEASE_DATE__    "April 10, 2025"
+#define __RELEASE_DATE__    "April 12, 2025"
 
 // C Standard headers
 #include <stdio.h>
