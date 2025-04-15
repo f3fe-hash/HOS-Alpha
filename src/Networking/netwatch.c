@@ -5,6 +5,7 @@
 #include <string.h>
 
 #define BUFFER_SIZE 65536
+<<<<<<< HEAD
 int running = 1;
 
 int compare_ip_count_desc(const void *a, const void *b)
@@ -28,6 +29,11 @@ int compare_ip_count_desc(const void *a, const void *b)
  * returns: The current time as a string.
  */
 const char *timestamp()
+=======
+static int running = 1;
+
+static const char *timestamp()
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 {
     static char buf[64];
     time_t now = time(NULL);
@@ -35,6 +41,7 @@ const char *timestamp()
     return buf;
 }
 
+<<<<<<< HEAD
 /*
  * Function: handle_interrupt
  * ---------------------------
@@ -50,6 +57,12 @@ void handle_interrupt(int sig)
     if (running == 0)
         return;
 
+=======
+// Handle the interruption by restoring the terminal to a clean state
+void handle_interrupt(int sig)
+{
+    (void)sig;  // explicitly ignore the parameter
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
     running = 0;
 
     // Additional cleanup to reset terminal settings can go here if needed
@@ -57,6 +70,7 @@ void handle_interrupt(int sig)
     fflush(stdout);
 }
 
+<<<<<<< HEAD
 /*
  * Function: resolve_hostname
  * ---------------------------
@@ -66,6 +80,9 @@ void handle_interrupt(int sig)
  *
  * returns: The hostname as a string.
  */
+=======
+// Function to resolve IP address to hostname
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 const char *resolve_hostname(struct in_addr ip)
 {
     struct hostent *host = gethostbyaddr(&ip, sizeof(ip), AF_INET);
@@ -75,6 +92,7 @@ const char *resolve_hostname(struct in_addr ip)
         return "Unknown Host";
 }
 
+<<<<<<< HEAD
 /*
  * Function: netwatch_start
  * -------------------------
@@ -83,6 +101,8 @@ const char *resolve_hostname(struct in_addr ip)
  * interface: The network interface to monitor.
  * max_hosts: The maximum number of hosts to display.
  */
+=======
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 void netwatch_start(const char *interface, int max_hosts)
 {
     int sockfd;
@@ -128,20 +148,40 @@ void netwatch_start(const char *interface, int max_hosts)
     unsigned long last_packets = 0;
     unsigned long last_bytes = 0;
 
+<<<<<<< HEAD
     struct ip_count ip_addresses[256] = {0}; // Store IP counts, increase size if needed
+=======
+    time_t last_refresh = time(NULL);
+
+    // Data structure to hold IP address counts
+    struct ip_count
+    {
+        struct in_addr ip;
+        unsigned long count;
+    };
+
+    struct ip_count ip_addresses[256]; // Store IP counts, increase size if needed
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
     int ip_count = 0;
 
     printf("\033[2J\033[H"); // clear screen and move cursor to top
 
+<<<<<<< HEAD
     running = true;
 
+=======
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
     while (running)
     {
         ssize_t data_size = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, NULL, NULL);
         if (data_size < 0)
         {
+<<<<<<< HEAD
             if (errno == EINTR)
                 break;
+=======
+            if (errno == EINTR) break;
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
             perror("recvfrom");
             break;
         }
@@ -154,7 +194,11 @@ void netwatch_start(const char *interface, int max_hosts)
         {
             struct iphdr *iph = (struct iphdr *)(buffer + sizeof(struct ethhdr));
             struct in_addr src_ip;
+<<<<<<< HEAD
             src_ip.s_addr = iph->saddr; // Assign the IP address properly
+=======
+            src_ip.s_addr = iph->saddr;  // Assign the IP address properly
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 
             // Count the IP address occurrences
             int found = 0;
@@ -175,6 +219,7 @@ void netwatch_start(const char *interface, int max_hosts)
                 ip_count++;
             }
 
+<<<<<<< HEAD
             total_packets++;
             total_bytes += data_size;
 
@@ -214,6 +259,27 @@ void netwatch_start(const char *interface, int max_hosts)
             unsigned long pps = (unsigned long)((total_packets - last_packets) * 1000.0 / elapsed_ms);
             unsigned long bps = (unsigned long)((total_bytes - last_bytes) * 1000.0 / elapsed_ms);
 
+=======
+            switch (iph->protocol)
+            {
+                case IPPROTO_TCP:  tcp_packets++; break;
+                case IPPROTO_UDP:  udp_packets++; break;
+                case IPPROTO_ICMP: icmp_packets++; break;
+                default: other_packets++; break;
+            }
+        }
+        else
+        {
+            other_packets++;
+        }
+
+        if (time(NULL) - last_refresh >= 1)
+        {
+            last_refresh = time(NULL);
+
+            unsigned long pps = total_packets - last_packets;
+            unsigned long bps = total_bytes - last_bytes;
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
             last_packets = total_packets;
             last_bytes = total_bytes;
 
@@ -232,6 +298,7 @@ void netwatch_start(const char *interface, int max_hosts)
             }
 
             // Output
+<<<<<<< HEAD
             printf("\033[H");    // Move cursor to top
             printf("\033[?25l"); // Hide cursor
 
@@ -245,6 +312,19 @@ void netwatch_start(const char *interface, int max_hosts)
             printf("│ Total bytes (MB)  │  %-44.2f\t│\n", (double)total_bytes / 1000000);
             printf("│ Packets/s         │  %-44.2f\t│\n", (double)pps);
             printf("│ KBytes/s          │  %-44.2f\t│\n", (double)bps / 1000);
+=======
+            printf("\033[H"); // move cursor to top
+
+            __bold; __cyan;
+            printf("┌─────────────────────────────── NetWatch ──────────────────────────────┐\n");
+            printf("│ Interface: %-10s Time: %-40s  │\n", interface, timestamp());
+            printf("├───────────────────┼───────────────────────────────────────────────────┤\n");
+            __green;
+            printf("│ Packets captured  │  %-44lu\t│\n", total_packets);
+            printf("│ Total bytes       │  %-44lu\t│\n", total_bytes);
+            printf("│ Packets/s         │  %-44lu\t│\n", pps);
+            printf("│ Bytes/s           │  %-44lu\t│\n", bps);
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
             printf("├───────────────────┼───────────────────────────────────────────────────┤\n");
             printf("│ TCP               │  %-5lu \t\t\t\t\t\t│\n", tcp_packets);
             printf("│ UDP               │  %-5lu \t\t\t\t\t\t│\n", udp_packets);
@@ -269,8 +349,11 @@ void netwatch_start(const char *interface, int max_hosts)
             printf("└───────────────────────────────────────────────────────────────────────┘\n");
             __reset;
 
+<<<<<<< HEAD
             printf("\033[?25h"); // Show cursor
 
+=======
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
             fflush(stdout);
         }
     }

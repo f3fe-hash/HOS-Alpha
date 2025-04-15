@@ -35,6 +35,7 @@ int main(int argc, char **argv)
     // Main loop
     while (1)
     {
+<<<<<<< HEAD
         char *input = readline(prompt_string()); // Function we'll define
 
         if (input && *input)
@@ -45,6 +46,56 @@ int main(int argc, char **argv)
         }
         else if (!input)
             break; // Ctrl+D or error
+=======
+        // Check for user input
+        char input[256];
+
+        // Print prompt
+        if (port > 0)
+        {
+            __cyan;
+            printf("HOS");
+            __reset;
+            __blue;
+            printf("@");
+            __reset;
+            __green;
+            printf("%s:%d", ip, port);
+            __reset;
+            __blue;
+            printf("$ ");
+            __reset;
+        }
+        else
+        {
+            __cyan;
+            printf("HOS");
+            __reset;
+            __blue;
+            printf("@");
+            __reset;
+            __green;
+            printf("%s:-", ip);
+            __reset;
+            __red;
+            printf("$ ");
+            __reset;
+        }
+        fflush(stdout);
+
+        // Read user input
+        if (fgets(input, sizeof(input), stdin) != __null)
+        {
+            // Process input
+            execute(input);
+        }
+        else
+        {
+            // Handle error
+            perror("Error reading input");
+            break;
+        }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
     }
 
     return 0;
@@ -78,7 +129,13 @@ void args(int argc, char **argv)
         else if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--port") == 0)
         {
             if (i + 1 < argc)
+<<<<<<< HEAD
                 port = atoi(argv[++i]);
+=======
+            {
+                port = atoi(argv[++i]);
+            }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
             else
             {
                 fprintf(stderr, "Error: Port number not specified\n");
@@ -130,17 +187,33 @@ void execute(char *input)
         return; // No command entered
 
     char *cmd = tokens[0];
+<<<<<<< HEAD
+=======
+    char **args = tokens; // Full array: cmd + arguments
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 
     // === Built-in Commands ===
     // Exit the OS
     if (strcmp(cmd, "exit") == 0)
+<<<<<<< HEAD
         exit(0);
+=======
+    {
+        exit(0);
+    }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 
     // Ping a host
     else if (strcmp(cmd, "ping") == 0)
     {
         if (tokens[1] == NULL)
+<<<<<<< HEAD
             printf("Usage: ping <packets> <packet size> <hostname/IP> <timeout (microseconds)>\n");
+=======
+        {
+            printf("Usage: ping <packets> <packet size> <hostname/IP> <timeout (microseconds)>\n");
+        }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
         else
         {
             int packets = atoi(tokens[1]);
@@ -159,7 +232,13 @@ void execute(char *input)
                 return;
             }
             if (timeout <= 2000)
+<<<<<<< HEAD
                 timeout = 10000; // Default to 10ms if less than 2ms
+=======
+            {
+                timeout = 10000; // Default to 10ms if less than 2ms
+            }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 
             struct sockaddr_in dest_addr;
             dest_addr.sin_family = AF_INET;
@@ -174,7 +253,13 @@ void execute(char *input)
     else if (strcmp(cmd, "netwatch") == 0)
     {
         if (tokens[1] == NULL)
+<<<<<<< HEAD
             printf("Usage: netwatch <interface> <max hosts>\n");
+=======
+        {
+            printf("Usage: netwatch <interface> <max hosts>\n");
+        }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
         else
         {
             char *interface = tokens[1];
@@ -182,6 +267,7 @@ void execute(char *input)
         }
     }
 
+<<<<<<< HEAD
     // Hash command line arguments
     else if (strcmp(cmd, "hash") == 0)
     {
@@ -228,6 +314,12 @@ void execute(char *input)
     else if (strcmp(cmd, "help") == 0)
     {
         FILE *help_file = fopen("help.txt", "r");
+=======
+    // Open help file and read it to the console
+    else if (strcmp(cmd, "help") == 0)
+    {
+        FILE* help_file = fopen("help.txt", "r");
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
         if (help_file == NULL)
         {
             __fail;
@@ -236,14 +328,26 @@ void execute(char *input)
         }
         char line[256];
         while (fgets(line, sizeof(line), help_file) != NULL)
+<<<<<<< HEAD
             printf("%s", line);
+=======
+        {
+            printf("%s", line);
+        }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
         printf("\n");
         fclose(help_file);
     }
 
     // Print current OS version
     else if (strcmp(cmd, "version") == 0)
+<<<<<<< HEAD
         printf("HOS %s\n", HOS_VERSION);
+=======
+    {
+        printf("HOS %s\n", HOS_VERSION);
+    }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 
     // Echo all arguments to the console
     else if (strcmp(cmd, "echo") == 0)
@@ -257,7 +361,13 @@ void execute(char *input)
     else if (strcmp(cmd, "setport") == 0)
     {
         if (tokens[1] == NULL)
+<<<<<<< HEAD
             printf("Usage: setport <port>\n");
+=======
+        {
+            printf("Usage: setport <port>\n");
+        }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
         else
         {
             port = atoi(tokens[1]);
@@ -267,7 +377,13 @@ void execute(char *input)
 
     // Clear the screen
     else if (strcmp(cmd, "clear") == 0)
+<<<<<<< HEAD
         clear;
+=======
+    {
+        clear;
+    }
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 
     // Command not found
     else
@@ -391,6 +507,7 @@ void startup()
     printf("\033[31m");
     printf("------------------------------------------------------------------------------------------------\n");
     printf("\033[0m");
+<<<<<<< HEAD
 }
 
 /*
@@ -498,4 +615,6 @@ char **hos_autocomplete(const char *text, int start)
     if (start == 0)
         return rl_completion_matches(text, command_generator);
     return NULL;
+=======
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 }
