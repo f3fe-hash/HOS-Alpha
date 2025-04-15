@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/HOS.dir/src/Crypto/crypto.c.o CMakeFiles/HOS.dir/src/Networking/netroot.c.o CMakeFiles/HOS.dir/src/Networking/netwatch.c.o CMakeFiles/HOS.dir/src/Networking/ping.c.o CMakeFiles/HOS.dir/src/main.c.o -o HOS  /usr/lib/x86_64-linux-gnu/libcrypto.so /usr/lib/x86_64-linux-gnu/libreadline.so 
