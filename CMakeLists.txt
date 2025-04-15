@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(HOS VERSION 0.0.1 LANGUAGES C)
 
+<<<<<<< HEAD
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
@@ -30,3 +31,18 @@ if (READLINE_LIBRARY AND READLINE_INCLUDE_DIR)
 else()
     message(FATAL_ERROR "Readline library not found.")
 endif()
+=======
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Enable compiler warnings
+add_compile_options(-Wall -Wextra -std=c11)
+
+# Collect all .cpp files from src/
+file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.c)
+
+find_package(OpenSSL REQUIRED)
+
+# Define the executable target
+add_executable(HOS ${SOURCE_FILES})
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20

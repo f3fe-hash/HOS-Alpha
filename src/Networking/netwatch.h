@@ -2,6 +2,7 @@
 #define __NETWATCH_H__
 
 #include "netroot.h"
+<<<<<<< HEAD
 #include <poll.h>
 #include <time.h>
 #include <stdio.h>
@@ -22,6 +23,10 @@ struct ip_count
 };
 
 const char *timestamp();
+=======
+
+static const char *timestamp();
+>>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 void handle_interrupt(int sig);
 const char *resolve_hostname(struct in_addr ip);
 
