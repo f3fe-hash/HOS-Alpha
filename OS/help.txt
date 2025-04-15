@@ -1,0 +1,50 @@
+HOS - Hacker Operating System
+-----------------------------
+
+./HOS: Run the OS
+
+args:
+-h: print this help message
+-p run with a set port number
+
+Basic commands:
+exit:
+    Exit the OS
+
+    example:
+    exit
+help:
+    Show this help message
+
+    example:
+    help
+clear:
+    Clear the screen
+
+    example:
+    clear
+version:
+    Print current OS version
+
+    example:
+    version
+echo ...:
+    Echo all arguments to the console
+
+    example:
+    echo hi!
+setport <port>:
+    Set the connected port to a certain port number
+
+    example:
+    setport 8080
+ping <packets> <packet size> <hostname/IP> <timeout (microseconds)>:
+    Ping a host with a certain number of packets with a timeout between packets
+
+    example:
+    ping 10 64 8.8.8.8 10000
+netwatch <interface> <max hosts>:
+    Watch a networking interface for packets
+
+    example:
+    netwatch wlo1 15

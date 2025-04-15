@@ -1,0 +1,3 @@
+/home/hacker/Documents/Programming/Malware/HOS/Alpha 0.0.2/build/CMakeFiles/HOS.dir
+/home/hacker/Documents/Programming/Malware/HOS/Alpha 0.0.2/build/CMakeFiles/edit_cache.dir
+/home/hacker/Documents/Programming/Malware/HOS/Alpha 0.0.2/build/CMakeFiles/rebuild_cache.dir
