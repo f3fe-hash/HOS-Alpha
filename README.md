@@ -21,7 +21,7 @@ It is made for hackers, and includes low-level networking tools, hashing, and mo
 
 Netwatch runnning on my machine:
 
-![image](https://github.com/user-attachments/assets/90d20eab-249b-4b66-8633-eb4a434d5fe5)
+![image](https://github.com/user-attachments/assets/4ed863ca-6eee-4682-a9e3-2cc66ac50a19)
 
 ---
 
