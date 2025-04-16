@@ -1,6 +1,6 @@
 # HOS - Hacker Operating System
 
-**Version**: Alpha 0.0.1  
+**Version**: Alpha 0.0.2  
 **Author**: Brian Riff  
 **Release Date**: April 12, 2025
 
