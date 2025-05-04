@@ -1,9 +1,9 @@
 # HOS – Hacker Operating System  
 ⚡ *A modular, C-based Linux framework for hackers and tinkerers.*
 
-**Version**: Alpha 0.0.2  
+**Version**: Alpha 0.0.3  
 **Author**: Brian Riff  
-**Release Date**: April 12, 2025  
+**Release Date**: May 4, 2025  
 
 ---
 
@@ -27,6 +27,9 @@ Whether you're learning OS internals or building your own low-level tools, HOS p
 
 ---
 
+## NEW!
+- **GTK GUI mode!**: Allows you to use a GUI desktop instead of a console interface
+
 ## 🖼 NetWatch in Action
 
 Here’s what NetWatch looks like while monitoring the `wlo1` (main Wi-Fi) interface:
@@ -47,6 +50,7 @@ Here’s what NetWatch looks like while monitoring the `wlo1` (main Wi-Fi) inter
 | `setport` | Set OS communication port. (`-p <port>` also works at launch.) |
 | `ping`    | Ping a host using ICMP. |
 | `netwatch`| Launch network monitoring interface. |
+| `gui`     | Open Desktop GUI |
 
 ---
 
@@ -62,5 +66,6 @@ source compile.sh
 
 # Run the OS
 cd os
-sudo ./HOS    # Add -p <port> to set port on startup (ex. sudo ./HOS -p 8080)
+sudo ./HOS  # Add -p <port> to set port on startup (ex. sudo ./HOS -p 8080)
+            # Add --gui or -g to open desktop mode from startup
 cd ..
