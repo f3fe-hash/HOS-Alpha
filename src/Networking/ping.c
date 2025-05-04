@@ -125,6 +125,7 @@ int ping(int ip_address, int packet_size, int packets, int timeout)
             {
                 __fail;
                 printf("Request timed out\n");
+                return 1;
             }
             else
             {

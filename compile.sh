@@ -1,15 +1,14 @@
 #!/bin/bash
 
-mkdir -p build
-cd build
+mkdir -p .build
+mkdir -p os
+
+cd .build
 cmake ..
 make
 cd ..
 
-cp OS/* build/
+cp -r OS/* os/
+cp .build/HOS os/
 
-if [ $1 == "run" ]; then
-    cd build
-    sudo ./HOS
-    cd ..
-fi
+rm -r .build

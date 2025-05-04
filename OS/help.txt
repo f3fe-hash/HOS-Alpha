@@ -47,8 +47,4 @@ netwatch <interface> <max hosts>:
     Watch a networking interface for packets
 
     example:
-<<<<<<< HEAD
     netwatch wlo1 15
-=======
-    netwatch wlo1 15
->>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20

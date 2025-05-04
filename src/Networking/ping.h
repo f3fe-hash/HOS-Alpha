@@ -3,7 +3,7 @@
 
 #include "netroot.h"
 
-unsigned short checksum(unsigned short *buffer, int length);
+unsigned short calculate_checksum(unsigned short *buffer, int length);
 
 int ping(int ip_address, int packet_size, int packets, int timeout);
 

@@ -1,68 +1,103 @@
 #include "hpm_utils.h"
 
-package_t *package_create(const char *name, const char *version, const char *description, const char *author)
+git_repository *clone_repo(package_t *pkg)
 {
-    package_t *package = (package_t *)malloc(sizeof(package_t));
-    if (package == NULL)
+    const char *repo_url = pkg_to_url(pkg);
+    if (!repo_url)
     {
-        fprintf(stderr, "Error allocating memory for package\n");
+        printf("Invalid repository URL: %s\n", repo_url);
         return NULL;
     }
 
-    strncpy(package->name, name, MAX_PACKAGE_NAME_LENGTH);
-    strncpy(package->version, version, MAX_PACKAGE_VERSION_LENGTH);
-    strncpy(package->description, description, MAX_PACKAGE_DESCRIPTION_LENGTH);
-    strncpy(package->author, author, MAX_PACKAGE_NAME_LENGTH);
+    git_repository *repo = NULL;
+    git_clone_options clone_opts = GIT_CLONE_OPTIONS_INIT;
+    clone_opts.fetch_opts.callbacks.credentials = cred_cb;
 
-    package->data = NULL;
-    package->data_size = 0;
+    char path[256];
+    snprintf(path, sizeof(path), "lib/%s-%s", pkg->name, pkg->version);
+    mkdir(path, 0777);
 
-    package->hash = NULL;
-    package->hash_size = 0;
+    if (git_clone(&repo, repo_url, path, &clone_opts) != 0)
 
-    return package;
+    {
+        const git_error *err = git_error_last();
+        printf("Error cloning repository: %s\n", err->message);
+        return NULL;
+    }
+
+    return repo;
 }
 
-void package_destroy(package_t *package)
+const char *pkg_to_url(package_t *pkg)
 {
-    if (package != NULL)
+    static char url[256];
+    sprintf(url, "https://www.github.com/f3fe-hash/HOS-Packages-%s-%s.git", pkg->name, pkg->version);
+    return url;
+}
+
+package_t *init_package()
+{
+    package_t *pkg = (package_t *)malloc(sizeof(package_t));
+    if (pkg == NULL)
     {
-        // Remove package from install database
-        FILE *db = fopen("packages/.db-install.txt", "r");
-        FILE *tmp = fopen("packages/.db-install.tmp", "w");
-        if (db != NULL && tmp != NULL)
-        {
-            char line[1024];
-            while (fgets(line, sizeof(line), db) != NULL)
-            {
-                if (strstr(line, package->name) == NULL)
-                    fputs(line, tmp);
-            }
-            fclose(db);
-            fclose(tmp);
-
-            // Replace the original file with the temp file
-            if (remove("packages/.db-install.txt") != 0)
-            {
-                __fail;
-                printf("Error deleting original database file");
-            }
-            else if (rename("packages/.db-install.tmp", "packages/.db-install.txt") != 0)
-            {
-                __fail;
-                printf("Error renaming temporary database file");
-            }
-        }
-        else
-        {
-            fprintf(stderr, "Error opening install database\n");
-            if (db) fclose(db);
-            if (tmp) fclose(tmp);
-        }
-
-        // Free memory
-        free(package->data);
-        free(package->hash);
-        free(package);
+        printf("Error allocating memory for package\n");
+        return NULL;
     }
+
+    pkg->name = NULL;
+    pkg->version = NULL;
+    pkg->author = NULL;
+    pkg->id = 0;
+
+    return pkg;
+}
+
+int cred_cb(git_credential **out, const char *url, const char *username_from_url,
+            unsigned int allowed_types, void *payload)
+{
+
+    char *token = read_git_token();
+    if (!token)
+    {
+        __fail;
+        printf("Could not read GitHub token\n");
+        return -1;
+    }
+
+    int result = git_credential_userpass_plaintext_new(out, "x-access-token", token);
+    free(token);
+    return result;
+}
+
+char *read_git_token()
+{
+    const char *path = getenv("HOME");
+    if (!path)
+        return NULL;
+
+    char full_path[512];
+    snprintf(full_path, sizeof(full_path), "%s/%s", path, GIT_TOKEN_PATH);
+
+    FILE *fp = fopen(full_path, "r");
+    if (!fp)
+        return NULL;
+
+    char *token = malloc(256); // Allocate memory for token
+    if (!token)
+    {
+        fclose(fp);
+        return NULL;
+    }
+
+    if (!fgets(token, 256, fp))
+    {
+        free(token);
+        fclose(fp);
+        return NULL;
+    }
+
+    // Remove newline
+    token[strcspn(token, "\n")] = '\0';
+    fclose(fp);
+    return token;
 }

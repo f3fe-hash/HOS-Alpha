@@ -1,18 +1,15 @@
 #ifndef __NETROOT_H__
 #define __NETROOT_H__
 
-<<<<<<< HEAD
 // Standard C headers
-=======
->>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
 
-<<<<<<< HEAD
 // POSIX + Networking headers (ordered by dependency)
+#include <netdb.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
@@ -54,7 +51,6 @@
 #endif
 
 // Extern globals
-=======
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <linux/if_packet.h>
@@ -65,11 +61,22 @@
 #include <ifaddrs.h>
 #include <net/ethernet.h>
 
-#include "../main.h"
+#include "../root.h"
+#include "../lib/macro.h"
 
+#ifndef IFNAMSIZ
 #define IFNAMSIZ 16
-#define IFF_PROMISC 0x100
+#endif
 
+#ifndef IFF_PROMISC
+#define IFF_PROMISC 0x100
+#endif
+
+#ifndef IFF_LOOPBACK
+#define IFF_LOOPBACK 0x8
+#endif
+
+/*
 struct ifreq
 {
     char ifr_name[IFNAMSIZ]; // Interface name
@@ -89,16 +96,10 @@ struct ifreq
         };
     };
 };
+*/
 
-#define IFF_LOOPBACK 0x8
-
->>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20
 extern char ip[INET_ADDRSTRLEN];
 extern int port;
 extern int sockfd;
 
-<<<<<<< HEAD
 #endif // __NETROOT_H__
-=======
-#endif
->>>>>>> 5db255093fd22c39c6787f0ab1623bc057827f20

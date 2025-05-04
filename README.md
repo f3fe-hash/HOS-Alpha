@@ -1,50 +1,66 @@
-# HOS - Hacker Operating System
+# HOS – Hacker Operating System  
+⚡ *A modular, C-based Linux framework for hackers and tinkerers.*
 
-**Version**: Alpha 0.0.1  
+**Version**: Alpha 0.0.2  
 **Author**: Brian Riff  
-**Release Date**: April 12, 2025
+**Release Date**: April 12, 2025  
 
 ---
 
-HOS is a lightweight Linux-based operating system framework built in C.
-It is made for hackers, and includes low-level networking tools, hashing, and more! Currently in early alpha, HOS is modular and built for extensibility.
+HOS is a lightweight operating system framework built in C, designed for hackers, developers, and system-level explorers. It includes real-time networking tools, a custom shell, and modular architecture — all open and extensible.
 
-[HOS-Alpha Website](https://f3fe-hash.github.io/HOS-Alpha-Website/)
+🟥 Warning: This OS does need superuser privileges to run, and uses them for creating files and directories, along with accessing core networking utilities.
 
----
+Whether you're learning OS internals or building your own low-level tools, HOS provides a clean, powerful foundation.
 
-## Features
-- **Ping Module**: Basic ICMP-based connectivity checks.
-- **Modular Architecture**: Easy to extend with your own tools and libraries.
-- **Custom Shell**: Built-in command parsing for embedded usage and command execution.
-- **NetWatch**: Real-time network interface monitor with live packet stats and top host tracking.
-
-Netwatch runnning on my machine:
-
-![image](https://github.com/user-attachments/assets/4ed863ca-6eee-4682-a9e3-2cc66ac50a19)
+👉 **[Visit the Website](https://f3fe-hash.github.io/HOS-Alpha-Website/)**  
+⭐️ Star the repo if you find it interesting!
 
 ---
 
-## Commands
-- **help**:
-  Print a help message containing all of the commands, and how to use them.
-- **exit**:
-  Exit the OS, Ctrl-C also works.
-- **version**:
-  Print current OS Version.
-- **echo**:
-  Echo command arguments to the screen.
-- **clear**:
-  Clear the screen
-- **setport**:
-  Set the OS's port (Can also be achived at startup by specifying -p <port> when running)
-- **ping**:
-  Ping an host
-- **netwatch**:
-  Watch a network interface
+## 🚀 Features
 
-## Running the OS
-- Compiling the OS:
-  source compile.sh
-- Running the OS:
-  source compile.sh run
+- **🛠 Modular Architecture**: Easily add your own tools and system modules.
+- **🌐 NetWatch**: Real-time interface monitoring, live packet stats, and top-host tracking.
+- **📡 Ping Utility**: Basic ICMP-based connectivity checks.
+- **💻 Custom Shell**: Built-in command parsing and execution.
+
+---
+
+## 🖼 NetWatch in Action
+
+Here’s what NetWatch looks like while monitoring the `wlo1` (main Wi-Fi) interface:
+
+![NetWatch Screenshot](https://github.com/user-attachments/assets/4ed863ca-6eee-4682-a9e3-2cc66ac50a19)
+
+---
+
+## 🧾 Available Commands
+
+| Command   | Description |
+|-----------|-------------|
+| `help`    | Print help message with available commands. |
+| `exit`    | Exit the OS. (Ctrl+C also works.) |
+| `version` | Display current OS version. |
+| `echo`    | Echo input text to the screen. |
+| `clear`   | Clear the terminal screen. |
+| `setport` | Set OS communication port. (`-p <port>` also works at launch.) |
+| `ping`    | Ping a host using ICMP. |
+| `netwatch`| Launch network monitoring interface. |
+
+---
+
+## ⚙️ Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/f3fe-hash/HOS-Alpha.git
+cd HOS-Alpha
+
+# Compile the OS
+source compile.sh
+
+# Run the OS
+cd os
+sudo ./HOS    # Add -p <port> to set port on startup (ex. sudo ./HOS -p 8080)
+cd ..
