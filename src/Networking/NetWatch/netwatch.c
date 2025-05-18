@@ -1,16 +1,19 @@
 #include "netwatch.h"
+#include <signal.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <string.h>
 
 #define BUFFER_SIZE 65536
-
 static int running = 1;
 
-int compare_ip_count_desc(const void *a, const void *b)
-{
-    const struct ip_count *ip_a = (const struct ip_count *)a;
-    const struct ip_count *ip_b = (const struct ip_count *)b;
-    return (ip_b->count - ip_a->count);
-}
-
+/*
+ * Function: timestamp
+ * --------------------
+ * Returns the current time as a formatted string.
+ *
+ * returns: The current time as a string.
+ */
 const char *timestamp()
 {
     static char buf[64];
@@ -19,50 +22,63 @@ const char *timestamp()
     return buf;
 }
 
+/*
+ * Function: handle_interrupt
+ * ---------------------------
+ * Handles the Ctrl+C interrupt signal.
+ *
+ * sig: The signal number.
+ */
 void handle_interrupt(int sig)
 {
     (void)sig;
-    if (!running)
+    if (running == 0)
+    {
+        running = 1;
         return;
+    }
 
     running = 0;
     printf("\n[ NETWATCH ] Stopping...\n");
     fflush(stdout);
 }
 
+/*
+ * Function: resolve_hostname
+ * ---------------------------
+ * Resolves the hostname from an IP address.
+ *
+ * ip: The IP address to resolve.
+ *
+ * returns: The hostname as a string.
+ */
 const char *resolve_hostname(struct in_addr ip)
 {
     struct hostent *host = gethostbyaddr(&ip, sizeof(ip), AF_INET);
-    return (host) ? host->h_name : "Unknown Host";
+    if (host)
+        return host->h_name;
+    else
+        return "Unknown Host";
 }
 
-ip_t *scan_hosts(const char *baseip)
-{
-    ip_t *hosts = malloc(MAX_HOSTS * sizeof(ip_t));
-    char *search_ip = malloc(16);
-
-    if (!hosts)
-        return NULL;
-
-    for (int i = 0; i < MAX_HOSTS; i++)
-    {
-        // Check host
-        snprintf(search_ip, sizeof(ip_t) / sizeof(char), "%s.%d", baseip, i);
-        if (!ping(inet_addr(search_ip), 64, 1, 10000))
-            hosts[i] = (ip_t)search_ip;
-    }
-
-    return hosts;
-}
-
+/*
+ * Function: netwatch_start
+ * -------------------------
+ * Starts the network watch on the specified interface.
+ *
+ * interface: The network interface to monitor.
+ * max_hosts: The maximum number of hosts to display.
+ */
 void netwatch_start(const char *interface, int max_hosts)
 {
+    running = 1;
+
     int sockfd;
     struct ifreq ifr;
 
-    signal(SIGINT, handle_interrupt);
+    signal(SIGINT, handle_interrupt); // Ctrl+C handler
 
-    unsigned char *buffer = malloc(BUFFER_SIZE);
+    unsigned char *buffer = mp_alloc(mpool_, BUFFER_SIZE);
     if (!buffer)
         return;
 
@@ -70,7 +86,7 @@ void netwatch_start(const char *interface, int max_hosts)
     if (sockfd < 0)
     {
         perror("socket");
-        free(buffer);
+        mp_free(mpool_, buffer);
         return;
     }
 
@@ -78,8 +94,7 @@ void netwatch_start(const char *interface, int max_hosts)
     if (ioctl(sockfd, SIOCGIFFLAGS, &ifr) < 0)
     {
         perror("ioctl(SIOCGIFFLAGS)");
-        free(buffer);
-        close(sockfd);
+        mp_free(mpool_, buffer);
         return;
     }
 
@@ -87,21 +102,33 @@ void netwatch_start(const char *interface, int max_hosts)
     if (ioctl(sockfd, SIOCSIFFLAGS, &ifr) < 0)
     {
         perror("ioctl(SIOCSIFFLAGS)");
-        free(buffer);
-        close(sockfd);
+        mp_free(mpool_, buffer);
         return;
     }
 
-    unsigned long total_packets = 0, total_bytes = 0;
-    unsigned long tcp_packets = 0, udp_packets = 0, icmp_packets = 0, other_packets = 0;
-    unsigned long last_packets = 0, last_bytes = 0;
+    unsigned long total_packets = 0;
+    unsigned long total_bytes = 0;
+    unsigned long tcp_packets = 0;
+    unsigned long udp_packets = 0;
+    unsigned long icmp_packets = 0;
+    unsigned long other_packets = 0;
+
+    unsigned long last_packets = 0;
+    unsigned long last_bytes = 0;
+
     time_t last_refresh = time(NULL);
 
-    struct ip_count ip_addresses[256] = {0};
+    // Data structure to hold IP address counts
+    struct ip_count
+    {
+        struct in_addr ip;
+        unsigned long count;
+    };
+
+    struct ip_count ip_addresses[256]; // Store IP counts, increase size if needed
     int ip_count = 0;
 
-    printf("\033[2J\033[H"); // clear screen
-    running = 1;
+    printf("\033[2J\033[H"); // clear screen and move cursor to top
 
     while (running)
     {
@@ -121,8 +148,10 @@ void netwatch_start(const char *interface, int max_hosts)
         if (ntohs(eth->h_proto) == ETH_P_IP)
         {
             struct iphdr *iph = (struct iphdr *)(buffer + sizeof(struct ethhdr));
-            struct in_addr src_ip = {.s_addr = iph->saddr};
+            struct in_addr src_ip;
+            src_ip.s_addr = iph->saddr; // Assign the IP address properly
 
+            // Count the IP address occurrences
             int found = 0;
             for (int i = 0; i < ip_count; i++)
             {
@@ -133,6 +162,7 @@ void netwatch_start(const char *interface, int max_hosts)
                     break;
                 }
             }
+
             if (!found && ip_count < 256)
             {
                 ip_addresses[ip_count].ip = src_ip;
@@ -157,9 +187,7 @@ void netwatch_start(const char *interface, int max_hosts)
             }
         }
         else
-        {
             other_packets++;
-        }
 
         if (time(NULL) - last_refresh >= 1)
         {
@@ -170,47 +198,54 @@ void netwatch_start(const char *interface, int max_hosts)
             last_packets = total_packets;
             last_bytes = total_bytes;
 
-            ip_t *hosts = scan_hosts("192.168.1");
-            int total_hosts = sizeof(hosts) / sizeof(ip_t);
+            // Sort the IP addresses by count in descending order
+            for (int i = 0; i < ip_count - 1; i++)
+            {
+                for (int j = i + 1; j < ip_count; j++)
+                {
+                    if (ip_addresses[i].count < ip_addresses[j].count)
+                    {
+                        struct ip_count temp = ip_addresses[i];
+                        ip_addresses[i] = ip_addresses[j];
+                        ip_addresses[j] = temp;
+                    }
+                }
+            }
 
-            qsort(ip_addresses, ip_count, sizeof(struct ip_count), compare_ip_count_desc);
+            // Output
+            printf("\033[H"); // move cursor to top
 
-            __clear;
             __bold;
             __cyan;
             printf("┌─────────────────────────────── NetWatch ──────────────────────────────┐\n");
             printf("│ Interface: %-10s Time: %-40s  │\n", interface, timestamp());
             printf("├───────────────────┬───────────────────────────────────────────────────┤\n");
             __green;
-            printf("│ Packets captured  │  %-44lu\t│\n",  (unsigned long)total_packets);
-            printf("│ Total MBytes      │  %-42.2f\t│\n", (float)        total_bytes / 1000000.0);
-            printf("│ Packets/s         │  %-44lu\t│\n",  (unsigned long)pps);
-            printf("│ KBytes/s          │  %-41.2f\t│\n", (float)        bps / 1000.0);
+            printf("│ Packets captured  │  %-44lu\t│\n", total_packets);
+            printf("│ Total bytes       │  %-44lu\t│\n", total_bytes);
+            printf("│ Packets/s         │  %-44lu\t│\n", pps);
+            printf("│ Bytes/s           │  %-44lu\t│\n", bps);
             printf("├───────────────────┼───────────────────────────────────────────────────┤\n");
-            printf("│ TCP               │  %-5lu \t\t\t\t\t\t│\n", (unsigned long)tcp_packets);
-            printf("│ UDP               │  %-5lu \t\t\t\t\t\t│\n", (unsigned long)udp_packets);
-            printf("│ ICMP              │  %-5lu \t\t\t\t\t\t│\n", (unsigned long)icmp_packets);
-            printf("│ Other             │  %-5lu \t\t\t\t\t\t│\n", (unsigned long)other_packets);
-            printf("├───────────────────┴────────────────┬──────────────────────────────────┤\n");
-            printf("│ Top %-2d Addresses and Hostnames     │   %-2d Total Host(s)               │\n", max_hosts, ip_count);
-            printf("├───────────────────────┬────────────┴──────────────────────────────────┤\n");
+            printf("│ TCP               │  %-5lu \t\t\t\t\t\t│\n", tcp_packets);
+            printf("│ UDP               │  %-5lu \t\t\t\t\t\t│\n", udp_packets);
+            printf("│ ICMP              │  %-5lu \t\t\t\t\t\t│\n", icmp_packets);
+            printf("│ Other             │  %-5lu \t\t\t\t\t\t│\n", other_packets);
+
+            // Display the top 5 IP addresses and their hostnames
+            printf("├───────────────────┴───────────────────────────────────────────────────┤\n");
+            printf("│ Top %-2d Addresses and Hostnames                                        │\n", max_hosts);
+            printf("├───────────────────────┬───────────────────────────────────────────────┤\n");
 
             for (int i = 0; i < max_hosts && i < ip_count; i++)
             {
                 const char *hostname = resolve_hostname(ip_addresses[i].ip);
                 printf("│ (%-2d.) %-15s │ %-45s │\n", i + 1, inet_ntoa(ip_addresses[i].ip), hostname);
             }
+            printf("│ Total Hosts           │  %-45d│\n", ip_count);
 
             __yellow;
-            printf("├───────────────────────┴────────┬───────────────────────────────────────┤\n");
-            printf("│ Hosts found on current network │ Total Hosts: %20lu                 │\n", (unsigned long)total_hosts);
-            printf("├────────────────────────────────┴──────────────────────────────────────┤\n");
-
-            for (int i = 0; i < total_hosts; i++)
-                printf("│ %s \t\t\t\t\t\t\t\t│\n", hosts[i]);
-
-            printf("├───────────────────────────────────────────────────────────────────────┤\n");
-            printf("│                           Ctrl+C to stop                              │\n");
+            printf("├───────────────────────┴───────────────────────────────────────────────┤\n");
+            printf("│ Ctrl+C to stop                                                        │\n");
             printf("└───────────────────────────────────────────────────────────────────────┘\n");
             __reset;
 
@@ -218,9 +253,11 @@ void netwatch_start(const char *interface, int max_hosts)
         }
     }
 
+    // Clean up
     printf("\n[ NETWATCH ] Stopping...\n");
     ifr.ifr_flags &= ~IFF_PROMISC;
     ioctl(sockfd, SIOCSIFFLAGS, &ifr);
     close(sockfd);
-    free(buffer);
+
+    mp_free(mpool_, buffer);
 }
