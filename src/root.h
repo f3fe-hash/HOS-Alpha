@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 
 #include "lib/macro.h"
+#include "lib/memory.h"
 
 // Pre-defined paths
 #define HOSTS           "etc/hosts"

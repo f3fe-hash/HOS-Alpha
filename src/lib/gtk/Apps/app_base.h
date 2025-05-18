@@ -2,6 +2,7 @@
 #define __APP_BASE_H__
 
 #include <gtk/gtk.h>
+#include <cairo.h>
 #include "../../../root.h"
 
 // Gtk CSS file
@@ -12,6 +13,7 @@
 #define GTK_TEXTURE_APP_GEAR    "etc/textures/gear.png"
 #define GTK_TEXTURE_TERMINAL    "etc/textures/terminal.png"
 #define GTK_TEXTURE_FILE_SELECT "etc/textures/file.png"
+#define GTK_TEXTURE_NETWATCH    "etc/textures/netwatch.png"
 
 typedef struct
 {

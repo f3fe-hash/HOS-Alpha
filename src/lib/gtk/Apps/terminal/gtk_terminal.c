@@ -21,11 +21,11 @@ void append_to_terminal(GtkTextBuffer *buffer, const char *text)
 
 void execute_command(TerminalApp *app, const char *input)
 {
-    gtk_execute((char *)input, app->buffer);
+    gtk_execute(app, (char *)input, app->buffer);
     append_prompt(app); // Add a new prompt after the output
 }
 
-void gtk_execute(char *input, GtkTextBuffer *buffer)
+void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
 {
     char line[512];
     snprintf(line, sizeof(line), "\n");
@@ -215,6 +215,11 @@ void gtk_execute(char *input, GtkTextBuffer *buffer)
         free(pkg);
     }
 
+    else if (strcmp(cmd, "netwatch") == 0)
+    {
+        gtk_netwatch_app_activate(app->app, NULL);
+    }
+
     else
     {
         snprintf(out, sizeof(out), "Unknown command: %s\n", cmd);
@@ -254,9 +259,11 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer use
     return FALSE;
 }
 
-int gtk_terminal_app_activate(GtkApplication *app, gpointer data)
+int gtk_terminal_app_activate(GtkApplication *app, gpointer user_data)
 {
-    TerminalApp *terminal_app = g_new0(TerminalApp, 1);
+    TerminalApp *terminal_app = mp_alloc(mpool_, sizeof(TerminalApp));
+    terminal_app = (TerminalApp *)user_data;
+    terminal_app->app = app;
 
     terminal_app->window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(terminal_app->window), "GTK Terminal");

@@ -27,19 +27,20 @@ static void close_apps_window(GtkWidget *button, gpointer user_data)
 
 static void on_subapp_destroy(GtkWidget *widget, gpointer user_data)
 {
-    GUIApp_t *app = (GUIApp_t *)user_data;
+    GUIApp_t *app = mp_alloc(mpool_, sizeof(GUIApp_t));
+    app = (GUIApp_t *)user_data;
 
     // Remove the app from the GtkApp apps array
-    for (int i = 0; i < gtk.num_apps; ++i)
+    for (int i = 0; i < gtk->num_apps; ++i)
     {
-        if (&gtk.apps[i] == app)
+        if (&gtk->apps[i] == app)
         {
             // Shift remaining apps left
-            for (int j = i; j < gtk.num_apps - 1; ++j)
+            for (int j = i; j < gtk->num_apps - 1; ++j)
             {
-                gtk.apps[j] = gtk.apps[j + 1];
+                gtk->apps[j] = gtk->apps[j + 1];
             }
-            gtk.num_apps--;
+            gtk->num_apps--;
             break;
         }
     }
@@ -47,7 +48,8 @@ static void on_subapp_destroy(GtkWidget *widget, gpointer user_data)
 
 static void on_subapp_closed(GtkWidget *widget, gpointer user_data)
 {
-    GUIApp_t *app = (GUIApp_t *)user_data;
+    GUIApp_t *app = mp_alloc(mpool_, sizeof(GUIApp_t));
+    app = (GUIApp_t *)user_data;
 
     // Remove the app from the window list
     if (app->window)
@@ -56,5 +58,5 @@ static void on_subapp_closed(GtkWidget *widget, gpointer user_data)
         app->window = NULL; // Reset window reference after closing
     }
 
-    gtk.num_apps--; // Decrease the app count
+    gtk->num_apps--; // Decrease the app count
 }
