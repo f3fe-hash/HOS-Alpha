@@ -12,6 +12,13 @@ add_compile_options(-Wno-all -Wno-extra -Wno-missing-field-initializers -Wno-unu
 # Collect all .c files from src/
 file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.c)
 
+# Exclude test examples
+# Exclude cJSON tests and fuzzing files
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/src/cJSON/tests/.*")
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/src/cJSON/fuzzing/.*")
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/src/cJSON/test.c")
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/unity/.*")
+
 # Define the executable target
 add_executable(HOS ${SOURCE_FILES})
 

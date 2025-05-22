@@ -27,11 +27,9 @@ void execute_command(TerminalApp *app, const char *input)
 
 void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
 {
-    char line[512];
-    snprintf(line, sizeof(line), "\n");
-    append_to_terminal(buffer, line);
+    char newline[] = "\n";
+    append_to_terminal(buffer, newline);
 
-    // Clone and tokenize input
     char cmdline[512];
     strncpy(cmdline, input, sizeof(cmdline));
     cmdline[sizeof(cmdline) - 1] = '\0';
@@ -51,17 +49,15 @@ void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
         return;
 
     const char *cmd = tokens[0];
-    char out[2048]; // larger buffer for things like hpm
+    char out[2048] = {0};
 
     if (strcmp(cmd, "clear") == 0)
     {
         gtk_text_buffer_set_text(buffer, "", -1);
         return;
     }
-
     else if (strcmp(cmd, "echo") == 0)
     {
-        out[0] = '\0';
         for (int j = 1; tokens[j]; j++)
         {
             strcat(out, tokens[j]);
@@ -70,18 +66,15 @@ void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
         strcat(out, "\n");
         append_to_terminal(buffer, out);
     }
-
     else if (strcmp(cmd, "exit") == 0)
     {
         gtk_main_quit();
     }
-
     else if (strcmp(cmd, "version") == 0)
     {
         snprintf(out, sizeof(out), "HOS %s\n", HOS_VERSION);
         append_to_terminal(buffer, out);
     }
-
     else if (strcmp(cmd, "help") == 0)
     {
         FILE *file = fopen(HELP_FILE, "r");
@@ -95,7 +88,6 @@ void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
         append_to_terminal(buffer, "\n");
         fclose(file);
     }
-
     else if (strcmp(cmd, "hash") == 0)
     {
         if (!tokens[1] || !tokens[2])
@@ -104,24 +96,24 @@ void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
             return;
         }
 
-        const char *input = tokens[1];
+        const char *input_str = tokens[1];
         const char *algo = tokens[2];
         const unsigned char *raw_hash = NULL;
         size_t hash_len = 0;
 
         if (strcmp(algo, "sha1") == 0)
         {
-            raw_hash = sha1((byte *)input, strlen(input));
+            raw_hash = sha1((unsigned char *)input_str, strlen(input_str));
             hash_len = 20;
         }
         else if (strcmp(algo, "sha256") == 0)
         {
-            raw_hash = sha256((byte *)input, strlen(input));
+            raw_hash = sha256((unsigned char *)input_str, strlen(input_str));
             hash_len = 32;
         }
         else if (strcmp(algo, "sha512") == 0)
         {
-            raw_hash = sha512((byte *)input, strlen(input));
+            raw_hash = sha512((unsigned char *)input_str, strlen(input_str));
             hash_len = 64;
         }
         else
@@ -134,7 +126,6 @@ void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
         snprintf(out, sizeof(out), "Hash (%s): %s\n", algo, to_hex_string(raw_hash, hash_len));
         append_to_terminal(buffer, out);
     }
-
     else if (strcmp(cmd, "setport") == 0)
     {
         if (!tokens[1])
@@ -147,7 +138,6 @@ void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
         snprintf(out, sizeof(out), "Port set to %d\n", port);
         append_to_terminal(buffer, out);
     }
-
     else if (strcmp(cmd, "ping") == 0)
     {
         if (!tokens[1] || !tokens[2] || !tokens[3] || !tokens[4])
@@ -177,49 +167,61 @@ void gtk_execute(TerminalApp *app, char *input, GtkTextBuffer *buffer)
 
         ping(dest_addr.sin_addr.s_addr, packet_size, packets, timeout);
     }
-
     else if (strcmp(cmd, "hpm") == 0)
     {
         if (!tokens[1] || !tokens[2] || !tokens[3])
         {
-            append_to_terminal(buffer, "Usage: hpm <command> <package> <version>\n");
+            append_to_terminal(buffer, "Usage: hpm <install|download> <package> <repo-url>\n");
             return;
         }
 
         const char *command = tokens[1];
-        const char *name = tokens[2];
-        const char *version = tokens[3];
+        const char *package_name = tokens[2];
+        const char *repo_url = tokens[3];
 
-        package_t *pkg = init_package();
-        if (!pkg)
+        if (strcmp(command, "download") == 0)
         {
-            append_to_terminal(buffer, "Failed to allocate package.\n");
-            return;
+            if (download_pkg(package_name) != 0)
+            {
+                snprintf(out, sizeof(out), "Download failed for %s\n", package_name);
+                append_to_terminal(buffer, out);
+            }
+            else
+            {
+                snprintf(out, sizeof(out), "Downloaded %s successfully\n", package_name);
+                append_to_terminal(buffer, out);
+            }
         }
+        else if (strcmp(command, "install") == 0)
+        {
+            if (download_pkg(package_name) != 0)
+            {
+                snprintf(out, sizeof(out), "Download failed for %s\n", package_name);
+                append_to_terminal(buffer, out);
+                return;
+            }
 
-        pkg->name = strdup(name);
-        pkg->version = strdup(version);
-
-        if (strcmp(command, "install") == 0)
-            install_package(pkg);
-        else if (strcmp(command, "download") == 0)
-            download_package(pkg);
+            if (install_pkg(package_name) != 0)
+            {
+                snprintf(out, sizeof(out), "Install failed for %s\n", package_name);
+                append_to_terminal(buffer, out);
+            }
+            else
+            {
+                snprintf(out, sizeof(out), "Installed %s successfully\n", package_name);
+                append_to_terminal(buffer, out);
+            }
+        }
         else
         {
             snprintf(out, sizeof(out), "Unknown HPM command: %s\n", command);
             append_to_terminal(buffer, out);
         }
-
-        free(pkg->name);
-        free(pkg->version);
-        free(pkg);
     }
-
     else if (strcmp(cmd, "netwatch") == 0)
     {
         gtk_netwatch_app_activate(app->app, NULL);
     }
-
     else
     {
         snprintf(out, sizeof(out), "Unknown command: %s\n", cmd);

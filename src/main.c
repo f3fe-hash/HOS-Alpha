@@ -82,42 +82,6 @@ void args(int argc, char **argv)
 }
 
 /*
- * Function: boot_internet
- * ------------------------
- * Initializes the internet connection for HOS.
- *
- * returns: __null
- */
-void boot_internet()
-{
-    load_ip_address();
-
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
-    {
-        __fail;
-        printf("Error opening socket\n");
-    }
-    else
-    {
-        __ok;
-        printf("Socket opened successfully\n");
-    }
-
-    int opt = 1;
-    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-    {
-        __fail;
-        printf("Error setting socket options\n");
-    }
-    else
-    {
-        __ok;
-        printf("Socket options set successfully\n");
-    }
-}
-
-/*
  * Function: boot
  * ---------------
  * Initializes the HOS environment.
@@ -127,6 +91,7 @@ void boot_internet()
 void boot()
 {
     mp_init(mpool_);
+    PROCAPI_init(4);
 
     // Check if program can be run
     if (geteuid() != 0)
@@ -135,8 +100,6 @@ void boot()
         printf("This tool must be run as root. (sudo %s)\n", __argv[0]);
         HOS_exit(0);
     }
-
-    boot_internet();
 
     // Initialize OS files / directories
     printf("Creating HOS environment...\n");
@@ -155,20 +118,8 @@ void boot()
     move("help.txt", ".HOS/etc");
     move("textures", ".HOS/etc");
     chdir(".HOS");
-    newfile(GIT_TOKEN_PATH);
     __ok;
     printf("HOS environment created successfully\n");
-
-    // Write github access token to file
-    const char *tok = "idk123";
-    FILE *fp = fopen(GIT_TOKEN_PATH, "w");
-    if (!fp)
-    {
-        __fail;
-        printf("Failed to open git token file");
-    }
-    fwrite(tok, 41, 1, fp);
-    fclose(fp);
 
     // Prep libgit2
     git_libgit2_init();

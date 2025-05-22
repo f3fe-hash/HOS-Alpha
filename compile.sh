@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo rm -r os
+
 mkdir -p .build
 mkdir -p os
 

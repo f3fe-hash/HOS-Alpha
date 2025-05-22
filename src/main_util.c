@@ -120,11 +120,11 @@ char **hos_autocomplete(const char *text, int start)
 char *hash_string(const char *str, const char *algorithm)
 {
     if (strcmp(algorithm, "sha1") == 0)
-        return (char *)sha1((byte *)str, strlen(str));
+        return (char *)sha1((unsigned char *)str, strlen(str));
     else if (strcmp(algorithm, "sha256") == 0)
-        return (char *)sha256((byte *)str, strlen(str));
+        return (char *)sha256((unsigned char *)str, strlen(str));
     else if (strcmp(algorithm, "sha512") == 0)
-        return (char *)sha512((byte *)str, strlen(str));
+        return (char *)sha512((unsigned char *)str, strlen(str));
     else
         return NULL;
 }
@@ -203,15 +203,25 @@ void move(const char *file, const char *dest_dir)
         return;
     }
 
-    size_t path_len = strlen(dest_dir) + 1 + strlen(file) + 1;
-    char *dest = malloc(path_len);
-    if (!dest)
+    // Extract base name from file path
+    char *file_copy = strdup(file);
+    if (!file_copy)
     {
         fprintf(stderr, "Memory allocation failed\n");
         return;
     }
+    char *base = basename(file_copy);
 
-    snprintf(dest, path_len, "%s/%s", dest_dir, file);
+    size_t path_len = strlen(dest_dir) + 1 + strlen(base) + 1;
+    char *dest = malloc(path_len);
+    if (!dest)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(file_copy);
+        return;
+    }
+
+    snprintf(dest, path_len, "%s/%s", dest_dir, base);
 
     if (rename(file, dest) != 0)
     {
@@ -226,4 +236,5 @@ void move(const char *file, const char *dest_dir)
     }
 
     free(dest);
+    free(file_copy);
 }

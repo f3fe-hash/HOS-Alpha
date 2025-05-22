@@ -6,7 +6,6 @@
 
 // HPM headers
 #include "../HPM/hpm.h"
-#include "../HPM/hpm_utils.h"
 
 // Networking headers
 #include "../Networking/netroot.h"

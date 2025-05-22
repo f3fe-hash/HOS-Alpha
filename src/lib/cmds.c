@@ -5,7 +5,7 @@ void cmd_clear()
     __clear;
 }
 
-void cmd_echo(char **tokens)
+void cmd_echo(char** tokens)
 {
     for (int j = 1; tokens[j] != NULL; j++)
         printf("%s ", tokens[j]);
@@ -13,12 +13,13 @@ void cmd_echo(char **tokens)
 
 void cmd_exit()
 {
+    git_libgit2_shutdown();
     HOS_exit(0);
 }
 
 void cmd_help()
 {
-    FILE *help_file = fopen(HELP_FILE, "r");
+    FILE* help_file = fopen(HELP_FILE, "r");
     if (help_file == NULL)
     {
         __fail;
@@ -39,13 +40,13 @@ void cmd_version()
 
 /* Networking commands */
 
-void cmd_netwatch(char **tokens)
+void cmd_netwatch(char** tokens)
 {
     if (tokens[1] == NULL)
         printf("Usage: netwatch <interface> <max hosts>\n");
     else
     {
-        const char *interface = tokens[1];
+        const char* interface = tokens[1];
         int max_hosts = atoi(tokens[2]);
 
         // Ensure that max_hosts is a positive number
@@ -59,7 +60,7 @@ void cmd_netwatch(char **tokens)
     }
 }
 
-void cmd_ping(char **tokens)
+void cmd_ping(char** tokens)
 {
     if (tokens[1] == NULL)
         printf("Usage: ping <packets> <packet size> <hostname/IP> <timeout (microseconds)>\n");
@@ -68,7 +69,7 @@ void cmd_ping(char **tokens)
         int packets = atoi(tokens[1]);
         int packet_size = atoi(tokens[2]);
         int timeout = atoi(tokens[4]);
-        char *target = tokens[2];
+        char* target = tokens[2];
 
         if (packets <= 0)
         {
@@ -92,7 +93,7 @@ void cmd_ping(char **tokens)
     }
 }
 
-void cmd_setport(char **tokens)
+void cmd_setport(char** tokens)
 {
     if (tokens[1] == NULL)
         printf("Usage: setport <port>\n");
@@ -108,7 +109,7 @@ void cmd_setport(char **tokens)
 
 /* Crypto commands */
 
-void cmd_hash(char **tokens)
+void cmd_hash(char** tokens)
 {
     if (tokens[1] == NULL || tokens[2] == NULL)
     {
@@ -116,24 +117,24 @@ void cmd_hash(char **tokens)
         return;
     }
 
-    const char *input = tokens[1];
-    const char *algo = tokens[2];
-    const unsigned char *raw_hash = NULL;
+    const char* input = tokens[1];
+    const char* algo = tokens[2];
+    const unsigned char* raw_hash = NULL;
     size_t hash_len = 0;
 
     if (strcmp(algo, "sha1") == 0)
     {
-        raw_hash = sha1((byte *)input, strlen(input));
+        raw_hash = sha1((unsigned char*)input, strlen(input));
         hash_len = 20;
     }
     else if (strcmp(algo, "sha256") == 0)
     {
-        raw_hash = sha256((byte *)input, strlen(input));
+        raw_hash = sha256((unsigned char*)input, strlen(input));
         hash_len = 32;
     }
     else if (strcmp(algo, "sha512") == 0)
     {
-        raw_hash = sha512((byte *)input, strlen(input));
+        raw_hash = sha512((unsigned char*)input, strlen(input));
         hash_len = 64;
     }
     else
@@ -149,34 +150,89 @@ void cmd_hash(char **tokens)
 }
 
 /* Package manager commands */
-void cmd_hpm(char **tokens)
+void cmd_hpm(char** tokens)
 {
-    if (!tokens[1] || !tokens[2] || !tokens[3])
+    if (!tokens[1] || !tokens[2])
     {
-        printf("Usage: hpm <command> <package> <version>\n");
+        printf("Usage: hpm <command> <package>\n");
         return;
     }
 
-    const char *command = tokens[1];
+    const char* command = tokens[1];
+    const char* package_name = tokens[2];
+    const char* repo_url = tokens[3];
 
-    package_t *pkg = init_package();
-    if (!pkg)
-        return;
+    if (strcmp(command, "download") == 0)
+    {
+        if (download_pkg(package_name) != 0)
+            printf("Download failed for %s\n", package_name);
+    }
+    else if (strcmp(command, "install") == 0)
+    {
+        if (download_pkg(package_name) != 0)
+        {
+            printf("Download failed for %s\n", package_name);
+            return;
+        }
 
-    pkg->name = strdup(tokens[2]);
-    pkg->version = strdup(tokens[3]);
-
-    if (strcmp(command, "install") == 0)
-        install_package(pkg);
-    else if (strcmp(command, "download") == 0)
-        download_package(pkg);
+        if (install_pkg(package_name) != 0)
+            printf("Install failed for %s\n", package_name);
+    }
+    else if (strcmp(command, "purge") == 0)
+    {
+        purge_pkg(package_name);
+    }
+    else if (strcmp(command, "update") == 0)
+    {
+        update_pkg(package_name);
+    }
     else
+    {
         printf("Unknown HPM command: %s\n", command);
+    }
+}
 
-    // Cleanup
-    free(pkg->name);
-    free(pkg->version);
-    free(pkg);
+void cmd_run(char** tokens)
+{
+    if (tokens[1] == NULL)
+    {
+        __fail;
+        printf("Usage: run <binary> [args...]\n");
+        return;
+    }
+
+    char path[256];
+    snprintf(path, sizeof(path), "bin/%s", tokens[1]);
+
+    // Shift tokens[1...] to tokens[0...], dropping "run"
+    char* argv[256];
+    int i = 1;
+    int j = 0;
+    while (tokens[i] != NULL && j < 255)
+    {
+        argv[j++] = tokens[i++];
+    }
+    argv[j] = NULL;
+
+    pid_t pid = fork();
+
+    if (pid < 0)
+    {
+        __fail;
+        printf("Failed to fork process\n");
+    }
+    else if (pid == 0)
+    {
+        execv(path, argv);
+        __fail;
+        printf("Failed to execute: %s\n", path);
+        HOS_exit(1);
+    }
+    else
+    {
+        int status;
+        waitpid(pid, &status, 0);
+    }
 }
 
 /*
@@ -197,16 +253,16 @@ void cmd_gui()
  *
  * returns: __null
  */
-void execute(char *input)
+void execute(char* input)
 {
     size_t len = strlen(input);
     if (len > 0 && input[len - 1] == '\n')
         input[len - 1] = '\0';
 
-    char *tokens[256];
+    char* tokens[256];
     int i = 0;
 
-    char *token = strtok(input, " ");
+    char* token = strtok(input, " ");
     while (token != NULL && i < 255)
     {
         tokens[i++] = token;
@@ -217,7 +273,7 @@ void execute(char *input)
     if (i == 0)
         return;
 
-    char *cmd = tokens[0];
+    char* cmd = tokens[0];
 
     if (strcmp(cmd, "clear") == 0)
         cmd_clear();
@@ -248,6 +304,9 @@ void execute(char *input)
     
     else if (strcmp(cmd, "gui") == 0)
         cmd_gui();
+    
+    else if (strcmp(cmd, "run") == 0)
+        cmd_run(tokens);
 
     else
     {

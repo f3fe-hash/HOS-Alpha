@@ -21,8 +21,7 @@
 // Pre-defined paths
 #define HOSTS           "etc/hosts"
 #define HELP_FILE       "etc/help.txt"
-#define INSTALL_DB      "lib/.db-install.txt"
-#define GIT_TOKEN_PATH  "var/.git_token.txt"
+#define INSTALL_DB      "lib/.db-install.json"
 
 // Global variables
 extern int __argc;
@@ -31,6 +30,8 @@ extern bool use_gtk;
 extern struct sockaddr_in server_addr;
 
 extern const char *hos_commands[];
+
+void move(const char *file, const char *dest_dir);
 
 void HOS_exit(int status);
 void HOS_mkdir(const char* path);

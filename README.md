@@ -1,9 +1,9 @@
 # HOS – Hacker Operating System  
 ⚡ *A modular, C-based Linux framework for hackers and tinkerers.*
 
-**Version**: Alpha 1.1.1
+**Version**: Alpha 1.2
 **Author**: Brian Riff  
-**Release Date**: May 4, 2025  
+**Release Date**: May 21, 2025  
 
 ---
 
@@ -28,7 +28,7 @@ Whether you're learning OS internals or building your own low-level tools, HOS p
 ---
 
 ## NEW!
-- **GTK GUI mode!**: Allows you to use a GUI desktop instead of a console interface
+- **Full HPM!**: Full HOS Package Manager (HPM), download, install, and purge packages!
 
 ## 🖼 NetWatch in Action
 
@@ -51,6 +51,8 @@ Here’s what NetWatch looks like while monitoring the `wlo1` (main Wi-Fi) inter
 | `ping`    | Ping a host using ICMP. |
 | `netwatch`| Launch network monitoring interface. |
 | `gui`     | Open Desktop GUI |
+| `hpm`     | HOS Package Manger |
+| `run`     | Run an installed binary |
 
 ---
 

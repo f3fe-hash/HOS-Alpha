@@ -58,6 +58,44 @@ void* mp_alloc(MemoryPool* mp, size_t size)
     return NULL; // No suitable block
 }
 
+void* mp_realloc(MemoryPool* mp, void* ptr, size_t new_size)
+{
+    if (!mp) return NULL;
+
+    // Handle NULL pointer as allocation
+    if (!ptr)
+        return mp_alloc(mp, new_size);
+
+    // Handle zero-size reallocation as free
+    if (new_size == 0)
+    {
+        mp_free(mp, ptr);
+        return NULL;
+    }
+
+    // Get the block header of the current allocation
+    MemoryBlock_* old_block = (MemoryBlock_*)((char*)ptr - HEADER_SIZE);
+    size_t old_data_size = old_block->size - HEADER_SIZE;
+
+    // If the new size fits in the old block, reuse
+    if (ALIGN(new_size) <= old_data_size)
+        return ptr;
+
+    // Allocate new block
+    void* new_ptr = mp_alloc(mp, new_size);
+    if (!new_ptr)
+        return NULL;
+
+    // Copy old data to new location
+    memcpy(new_ptr, ptr, old_data_size);
+
+    // Free old block
+    mp_free(mp, ptr);
+
+    return new_ptr;
+}
+
+
 void mp_free(MemoryPool* mp, void* ptr)
 {
     if (!ptr)

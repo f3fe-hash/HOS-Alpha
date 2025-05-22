@@ -16,6 +16,7 @@
 #include <time.h>
 #include <getopt.h>
 #include <sys/stat.h>
+#include <libgen.h>
 
 // POSIX headers
 #include <readline/readline.h>
@@ -48,7 +49,6 @@
 
 // Etc
 #include "lib/macro.h"
-#include "lib/HOS.h"
 
 static struct option long_options[] =
 {
@@ -63,7 +63,6 @@ static struct option long_options[] =
 int main(int argc, char **argv);
 void args(int argc, char **argv);
 void execute(char *input);
-void boot_internet();
 void boot();
 void startup();
 

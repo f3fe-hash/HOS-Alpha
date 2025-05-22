@@ -31,8 +31,8 @@
 #endif
 
 // HOS information
-#define HOS_VERSION "Alpha 0.0.3"
+#define HOS_VERSION "Alpha v1.2"
 #define __AUTHOR__ "Brian Riff"
-#define __RELEASE_DATE__ "May 04, 2025"
+#define __RELEASE_DATE__ "May 18, 2025"
 
 #endif

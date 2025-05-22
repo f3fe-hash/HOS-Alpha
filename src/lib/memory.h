@@ -30,6 +30,7 @@ typedef struct
 
 void mp_init(MemoryPool* mp);
 void* mp_alloc(MemoryPool* mp, size_t size);
+void* mp_realloc(MemoryPool* mp, void* ptr, size_t new_size);
 void mp_free(MemoryPool* mp, void* ptr);
 
 // Standard memory pool
