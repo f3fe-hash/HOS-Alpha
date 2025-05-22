@@ -67,7 +67,4 @@ cd HOS-Alpha
 source compile.sh
 
 # Run the OS
-cd os
-sudo ./HOS  # Add -p <port> to set port on startup (ex. sudo ./HOS -p 8080)
-            # Add --gui or -g to open desktop mode from startup
-cd ..
+source run.sh
