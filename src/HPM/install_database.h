@@ -3,6 +3,14 @@
 
 #include "../cJSON/cJSON.h"
 #include "../root.h"
+#include "../types.h"
+
+typedef struct
+{
+    int PACKAGE_VERSION_MAJOR;
+    int PACKAGE_VERSION_MINOR;
+    int PACKAGE_VERSION_PATCH;
+} PackageHistoryTimestamp;
 
 cJSON* load_db();
 int save_db(cJSON* root);

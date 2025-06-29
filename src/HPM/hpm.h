@@ -4,10 +4,12 @@
 #include <git2.h>
 #include <dirent.h>
 #include "../cJSON/cJSON.h"
-#include "../APIs/Process/proc_api.h"
 
 #include "../root.h"
 #include "install_database.h"
+
+#include "../lib/ll.h"
+#include "../lib/memory.h"
 
 #define INSTALL_DIR  "lib"
 #define INSTALL_JSON "hpm.json"

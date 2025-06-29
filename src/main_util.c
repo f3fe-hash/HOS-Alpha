@@ -15,22 +15,22 @@
  */
 void startup()
 {
-    printf("\033[31m");
-    printf("------------------------------------------------------------------------------------------------\n");
-    printf("\033[34m");
-    printf("H   H   OOO    SSS    |    BBB   RRRR   IIIII  AAAAA   N   N      RRRR   IIIII  FFFFF  FFFFF\n");
-    printf("H   H  O   O  S       |    B  B  R   R    I    A   A   NN  N      R   R    I    F      F    \n");
-    printf("HHHHH  O   O   SSS    |    BBB   RRRR     I    AAAAA   N N N      RRRR     I    FFF    FFF  \n");
-    printf("H   H  O   O      S   |    B  B  R  R     I    A   A   N  NN      R  R     I    F      F    \n");
-    printf("H   H   OOO    SSS    |    BBB   R   R  IIIII  A   A   N   N      R   R  IIIII  F      F    \n");
-    printf("\033[0m\033[31m");
-    printf("------------------------------------------------------------------------------------------------\n");
-    printf("\033[0m\033[35m");
-    printf("\t\t\tHOS %s (%s)\n", HOS_VERSION, __RELEASE_DATE__);
-    printf("\t\t\t\t%s\n", __AUTHOR__);
-    printf("\033[31m");
-    printf("------------------------------------------------------------------------------------------------\n");
-    printf("\033[0m");
+    __red;
+    printf("──────────────────────┬─────────────────────────────────────────────────────────────────────────\n");
+    __blue;
+    printf("H   H   OOO    SSS    │    BBB   RRRR   IIIII  AAAAA   N   N      RRRR   IIIII  FFFFF  FFFFF\n");
+    printf("H   H  O   O  S       │    B  B  R   R    I    A   A   NN  N      R   R    I    F      F    \n");
+    printf("HHHHH  O   O   SSS    │    BBB   RRRR     I    AAAAA   N N N      RRRR     I    FFF    FFF  \n");
+    printf("H   H  O   O      S   │    B  B  R  R     I    A   A   N  NN      R  R     I    F      F    \n");
+    printf("H   H   OOO    SSS    │    BBB   R   R  IIIII  A   A   N   N      R   R  IIIII  F      F    \n");
+    __red;
+    printf("──────────────────────┴─────────────────────────────────────────────────────────────────────────\n");
+    __magenta;
+    printf("\t\t\t   HOS Alpha v%d.%d.%d (%s)\n", HOS_VERSION_MAJOR, HOS_VERSION_MINOR, HOS_VERSION_PATCH, RELEASE_DATE);
+    printf("\t\t\t\t\t   %s\n", AUTHOR);
+    __red;
+    printf("────────────────────────────────────────────────────────────────────────────────────────────────\n");
+    __reset;
 }
 
 /*
@@ -40,7 +40,7 @@ void startup()
  *
  * returns: A string containing the prompt.
  */
-char *prompt_string()
+char* prompt_string()
 {
     static char prompt[256];
     if (port > 0)
@@ -62,10 +62,10 @@ char *prompt_string()
  *          If no more completions are available, returns NULL.
  *          The function uses static variables to maintain state between calls.
  */
-char *command_generator(const char *text, int state)
+char* command_generator(const char* text, int state)
 {
     static int list_index, len;
-    const char *name;
+    const char* name;
 
     if (!state)
     {
@@ -94,7 +94,7 @@ char *command_generator(const char *text, int state)
  *          If no completions are found, returns NULL.
  *          If the start position is 0, it uses the command_generator function.
  */
-char **hos_autocomplete(const char *text, int start)
+char** hos_autocomplete(const char* text, int start)
 {
     if (start == 0)
         return rl_completion_matches(text, command_generator);
@@ -117,7 +117,7 @@ char **hos_autocomplete(const char *text, int start)
  *
  * returns: A string containing the hexadecimal representation of the hash.
  */
-char *hash_string(const char *str, const char *algorithm)
+char* hash_string(const char* str, const char* algorithm)
 {
     if (strcmp(algorithm, "sha1") == 0)
         return (char *)sha1((unsigned char *)str, strlen(str));
@@ -139,7 +139,7 @@ char *hash_string(const char *str, const char *algorithm)
  *
  * returns: A string containing the hexadecimal representation of the hash.
  */
-char *to_hex_string(const unsigned char *hash, size_t len)
+char* to_hex_string(const unsigned char* hash, size_t len)
 {
     static char hexstr[129];
     for (size_t i = 0; i < len; ++i)
@@ -163,16 +163,16 @@ char *to_hex_string(const unsigned char *hash, size_t len)
  *
  * returns: __null
  */
-void newfile(const char *filename)
+void newfile(const char* filename)
 {
-    FILE *file = fopen(filename, "w");
-    if (file == NULL)
+    FILE* fp = fopen(filename, "w");
+    if (fp == NULL)
     {
         __fail;
         printf("Error creating file: %s\n", filename);
         return;
     }
-    fclose(file);
+    fclose(fp);
 }
 
 /*
@@ -185,7 +185,7 @@ void newfile(const char *filename)
  *
  * returns: __null
  */
-void move(const char *file, const char *dest_dir)
+void move(const char* file, const char* dest_dir)
 {
     struct stat st;
 
@@ -204,16 +204,16 @@ void move(const char *file, const char *dest_dir)
     }
 
     // Extract base name from file path
-    char *file_copy = strdup(file);
+    char* file_copy = strdup(file);
     if (!file_copy)
     {
         fprintf(stderr, "Memory allocation failed\n");
         return;
     }
-    char *base = basename(file_copy);
+    char* base = basename(file_copy);
 
     size_t path_len = strlen(dest_dir) + 1 + strlen(base) + 1;
-    char *dest = malloc(path_len);
+    char* dest = mp_alloc(mpool_, path_len);
     if (!dest)
     {
         fprintf(stderr, "Memory allocation failed\n");
@@ -235,6 +235,6 @@ void move(const char *file, const char *dest_dir)
         printf("File moved successfully: %s to %s\n", file, dest);
     }
 
-    free(dest);
+    mp_free(mpool_, dest);
     free(file_copy);
 }

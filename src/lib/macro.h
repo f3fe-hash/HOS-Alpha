@@ -1,9 +1,8 @@
-#pragma once
-
 #ifndef __MACRO_H__
 #define __MACRO_H__
 
 #include <stdio.h>
+#include "../types.h"
 
 #define __null ((void*)0)
 
@@ -14,14 +13,14 @@
 #define __blue      printf("\033[34m")
 #define __cyan      printf("\033[36m")
 #define __magenta   printf("\033[35m")
-#define __white     printf("\033[37m")
+#define __white     printf("\033[37m") // Not used
 #define __reset     printf("\033[0m")
 #define __bold      printf("\033[1m")
-#define __underline printf("\033[4m")
+#define __underline printf("\033[4m") // Not used
 
 // Status macros
 #define __ok   printf("\033[32m[  OK  ]\033[0m ")
-//#define __info printf("\033[34m[ INFO ]\033[0m ")
+//#define __info printf("\033[34m[ INFO ]\033[0m ") // Not Used
 #define __warn printf("\033[33m[ WARN ]\033[0m ")
 #define __fail printf("\033[31m[FAILED]\033[0m ")
 
@@ -31,8 +30,10 @@
 #endif
 
 // HOS information
-#define HOS_VERSION "Alpha v1.2"
-#define __AUTHOR__ "Brian Riff"
-#define __RELEASE_DATE__ "May 18, 2025"
+extern const char* AUTHOR;
+extern const char* RELEASE_DATE;
+extern const int HOS_VERSION_MAJOR;
+extern const int HOS_VERSION_MINOR;
+extern const int HOS_VERSION_PATCH;
 
 #endif

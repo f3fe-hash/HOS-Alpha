@@ -20,7 +20,7 @@
 
 // Pre-defined paths
 #define HOSTS           "etc/hosts"
-#define HELP_FILE       "etc/help.txt"
+#define HELP_FILE       "etc/help/help.txt"
 #define INSTALL_DB      "lib/.db-install.json"
 
 // Global variables

@@ -5,7 +5,7 @@ MemoryPool* mpool_ = &mpool_instance;
 
 void mp_init(MemoryPool* mp)
 {
-    mp->free_list = (MemoryBlock_*)mp->raw;
+    mp->free_list = (MemoryBlock_ *)mp->raw;
     mp->free_list->size = MEMORY_POOL_SIZE;
     mp->free_list->next = NULL;
 }
@@ -16,7 +16,8 @@ void* mp_alloc(MemoryPool* mp, size_t size)
         return NULL;
 
     size_t total_size = ALIGN(size) + HEADER_SIZE;
-    MemoryBlock_ *prev = NULL, *curr = mp->free_list;
+    MemoryBlock_* prev = NULL;
+    MemoryBlock_* curr = mp->free_list;
 
     while (curr)
     {
@@ -28,7 +29,7 @@ void* mp_alloc(MemoryPool* mp, size_t size)
             if (remaining >= HEADER_SIZE + ALIGNMENT)
             {
                 // Split: allocated part is the front, rest becomes a new block
-                MemoryBlock_* next_block = (MemoryBlock_*)((char*)curr + total_size);
+                MemoryBlock_* next_block = (MemoryBlock_ *)((char *)curr + total_size);
                 next_block->size = remaining;
                 next_block->next = curr->next;
 
@@ -48,7 +49,7 @@ void* mp_alloc(MemoryPool* mp, size_t size)
                     mp->free_list = curr->next;
             }
 
-            return (void*)((char*)curr + HEADER_SIZE);
+            return (void *)((char *)curr + HEADER_SIZE);
         }
 
         prev = curr;
@@ -74,7 +75,7 @@ void* mp_realloc(MemoryPool* mp, void* ptr, size_t new_size)
     }
 
     // Get the block header of the current allocation
-    MemoryBlock_* old_block = (MemoryBlock_*)((char*)ptr - HEADER_SIZE);
+    MemoryBlock_* old_block = (MemoryBlock_ *)((char *)ptr - HEADER_SIZE);
     size_t old_data_size = old_block->size - HEADER_SIZE;
 
     // If the new size fits in the old block, reuse
@@ -82,17 +83,17 @@ void* mp_realloc(MemoryPool* mp, void* ptr, size_t new_size)
         return ptr;
 
     // Allocate new block
-    void* new_ptr = mp_alloc(mp, new_size);
-    if (!new_ptr)
+    void* pNew = mp_alloc(mp, new_size);
+    if (!pNew)
         return NULL;
 
     // Copy old data to new location
-    memcpy(new_ptr, ptr, old_data_size);
+    memcpy(pNew, ptr, old_data_size);
 
     // Free old block
     mp_free(mp, ptr);
 
-    return new_ptr;
+    return pNew;
 }
 
 
@@ -101,7 +102,7 @@ void mp_free(MemoryPool* mp, void* ptr)
     if (!ptr)
         return;
 
-    MemoryBlock_* block = (MemoryBlock_*)((char*)ptr - HEADER_SIZE);
+    MemoryBlock_* block = (MemoryBlock_ *)((char *)ptr - HEADER_SIZE);
     block->next = mp->free_list;
     mp->free_list = block;
 }

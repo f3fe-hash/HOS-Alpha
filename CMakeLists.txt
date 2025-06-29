@@ -1,32 +1,31 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(HOS VERSION 0.0.1 LANGUAGES C)
+project(HOS VERSION 1.3 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Enable compiler warnings
-add_compile_options(-Wno-all -Wno-extra -Wno-missing-field-initializers -Wno-unused-parameter -Wno-unused-function)
+add_compile_options(-Wno-all -Wno-extra -Wno-missing-field-initializers -Wno-unused-parameter -Wno-unused-function -Wno-deprecated-declarations)
 
 # Collect all .c files from src/
 file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/*.c)
 
-# Exclude test examples
-# Exclude cJSON tests and fuzzing files
-list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/src/cJSON/tests/.*")
-list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/src/cJSON/fuzzing/.*")
-list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/src/cJSON/test.c")
-list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/unity/.*")
-
-# Define the executable target
+# Define the executable target first
 add_executable(HOS ${SOURCE_FILES})
 
 target_compile_definitions(HOS PRIVATE _DEFAULT_SOURCE _POSIX_C_SOURCE=200809L)
 
 # Link OpenSSL
 find_package(OpenSSL REQUIRED)
-target_link_libraries(HOS PRIVATE OpenSSL::Crypto)
+
+if (OPENSSL_FOUND)
+    target_include_directories(HOS PRIVATE ${OPENSSL_INCLUDE_DIR})
+    target_link_libraries(HOS PRIVATE OpenSSL::Crypto)
+else()
+    message(FATAL_ERROR "OpenSSL not found")
+endif()
 
 # Link Readline
 find_library(READLINE_LIBRARY readline)

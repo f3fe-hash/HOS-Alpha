@@ -13,7 +13,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
-#include <time.h>
 #include <getopt.h>
 #include <sys/stat.h>
 #include <libgen.h>
@@ -22,33 +21,14 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-// OpenSSL headers
-#include <openssl/rand.h>
-#include <openssl/sha.h>
-#include <openssl/aes.h>
-#include <openssl/evp.h>
-#include <openssl/err.h>
-
-// Security headers
-#include "Crypto/crypto.h"
-
-// Networking headers
-#include "Networking/netroot.h"
-#include "Networking/netutils.h"
-#include "Networking/ping.h"
-#include "Networking/NetWatch/netwatch.h"
-
-// HPM headers
+// These have certain files that need to be created on startup
+#include "net/HTP/htp.h"
 #include "HPM/hpm.h"
-
-// GTK GUI
-#include "lib/gtk/gtk_main.h"
-
-// Commands
-#include "lib/cmds.h"
 
 // Etc
 #include "lib/macro.h"
+#include "lib/memory.h"
+#include "root.h"
 
 static struct option long_options[] =
 {

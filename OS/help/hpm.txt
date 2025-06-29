@@ -1,0 +1,10 @@
+HPM
+----------------------
+
+HOS Package Manger
+
+Usage:
+hpm <command> <package>
+
+Example:
+hpm install dummy

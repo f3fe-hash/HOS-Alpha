@@ -1,0 +1,3 @@
+/home/brian/Documents/Programming/HOS/Alpha/Alpha v1.2.1/.build/CMakeFiles/HOS.dir
+/home/brian/Documents/Programming/HOS/Alpha/Alpha v1.2.1/.build/CMakeFiles/edit_cache.dir
+/home/brian/Documents/Programming/HOS/Alpha/Alpha v1.2.1/.build/CMakeFiles/rebuild_cache.dir

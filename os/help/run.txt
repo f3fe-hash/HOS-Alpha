@@ -1,0 +1,9 @@
+RUN
+----------------------
+
+Execute a binary installed by HPM
+
+Usage: run <binary> [args...]
+
+Example (Requires dummy installed: hpm install dummy)
+run dummy 1 2 3

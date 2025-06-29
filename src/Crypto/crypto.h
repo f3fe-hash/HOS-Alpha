@@ -12,6 +12,10 @@
 
 #include "../root.h"
 
+#define AES_128 128
+#define AES_192 192
+#define AES_256 256
+
 typedef struct
 {
     unsigned char* key;

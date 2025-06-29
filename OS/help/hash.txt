@@ -1,0 +1,10 @@
+HASH
+----------------------
+
+Hash input data
+
+Usage:
+    hash <algorithm> <data>
+
+Example:
+    hash sha256 Hello

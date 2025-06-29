@@ -1,11 +1,11 @@
 {
-    "name": "crypto-blocks",
+    "name": "HUS",
     "version": "1.0",
     "url": "",
     "compile-time":
     {
         "compile-script": "compile.sh",
-        "compile-dir": "crypto-blocks-compiled",
-        "executable": "cryptoBlocks"
+        "compile-dir": "build",
+        "executable": "Hus"
     }
 }

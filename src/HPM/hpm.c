@@ -52,7 +52,7 @@ int download_pkg(const char* pkg_name)
         return 1;
     }
 
-    git_repository_free(repo); // free the repo pointer after cloning
+    git_repository_free(repo); // Free repo ptr
     mp_free(mpool_, repo_url);
 
     __ok;
@@ -111,7 +111,7 @@ int install_pkg(const char* pkg_name)
 
     // Run compile script
     const char* compile[] = {"bash", script, NULL};
-    if (run_command((char* const*)compile) != 0)
+    if (run_command((char* const *)compile) != 0)
     {
         __fail;
         printf("Compilation failed\n");
@@ -123,7 +123,7 @@ int install_pkg(const char* pkg_name)
 
     // Move the specified executable
     size_t plen = strlen(name->valuestring) + 1 + strlen(pkg_name) + 1;
-    char *path = mp_alloc(mpool_, plen);
+    char* path = mp_alloc(mpool_, plen);
     if (path == NULL)
     {
         perror("malloc => NULL");

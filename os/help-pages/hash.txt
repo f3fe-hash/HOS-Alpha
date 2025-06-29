@@ -1,0 +1,18 @@
+NAME
+    hash - hash an input file, or a string
+
+DESCRIPTION
+    Hash any input file, or directly a string.
+
+OPTIONS
+    -h --help:
+        Display help text for the command
+    
+    -a --algo:
+        Set the hashing algorithm to use for hashing the inputed data
+    
+    -t --text:
+        Set the text to be hashed
+    
+    -f --file:
+        Set the file to be hashed

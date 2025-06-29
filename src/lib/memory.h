@@ -6,7 +6,11 @@
 #include <string.h>
 #include <stdio.h>
 
-#define MEMORY_POOL_SIZE 1048576 // 1MiB
+#define KiB 1024        // 1 KiB
+#define MiB 1024 * KiB  // 1 MiB
+#define GiB 1024 * MiB  // 1 GiB
+
+#define MEMORY_POOL_SIZE 2097152  // 2MiB
 #define ALIGNMENT 8
 
 #define ALIGN(size) (((size) + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1))
@@ -28,10 +32,10 @@ typedef struct
     MemoryBlock_* free_list;
 } MemoryPool;
 
-void mp_init(MemoryPool* mp);
+void  mp_init(MemoryPool* mp);
 void* mp_alloc(MemoryPool* mp, size_t size);
 void* mp_realloc(MemoryPool* mp, void* ptr, size_t new_size);
-void mp_free(MemoryPool* mp, void* ptr);
+void  mp_free(MemoryPool* mp, void* ptr);
 
 // Standard memory pool
 extern MemoryPool* mpool_;

@@ -13,7 +13,7 @@ HOS is a lightweight operating system framework built in C, designed for hackers
 
 Whether you're learning OS internals or building your own low-level tools, HOS provides a clean, powerful foundation.
 
-👉 **[Visit the Website](https://f3fe-hash.github.io/HOS-Alpha-Website/)**  
+👉 **[Visit the Website!](https://f3fe-hash.github.io/HOS-Alpha-Website/)**  
 ⭐️ Star the repo if you find it interesting!
 
 ---
@@ -67,7 +67,4 @@ cd HOS-Alpha
 source compile.sh
 
 # Run the OS
-cd os
-sudo ./HOS  # Add -p <port> to set port on startup (ex. sudo ./HOS -p 8080)
-            # Add --gui or -g to open desktop mode from startup
-cd ..
+source run.sh

@@ -53,7 +53,7 @@ void add_child(Tree* tree, TreeNode* child, unsigned int parent_id)
         TreeNode* parent = find_node(tree, parent_id);
         if (!parent) return;
 
-        size_t new_size = (parent->num_children + 1) * sizeof(TreeNode*);
+        size_t new_size = (parent->num_children + 1) * sizeof(TreeNode *);
         parent->children = mp_realloc(mpool_, parent->children, new_size);
         parent->children[parent->num_children++] = child;
     }
@@ -68,7 +68,7 @@ void add_node(Tree* tree, TreeData* value, unsigned int node_id)
     TreeNode* node = find_node(tree, node_id);
     if (!node) return;
 
-    size_t new_size = (node->num_values + 1) * sizeof(TreeData*);
+    size_t new_size = (node->num_values + 1) * sizeof(TreeData *);
     node->values = mp_realloc(mpool_, node->values, new_size);
     node->values[node->num_values++] = value;
 }
@@ -88,7 +88,7 @@ void remove_node(Tree* tree, unsigned int node_id, int index)
 
     node->num_values--;
     if (node->num_values > 0)
-        node->values = mp_realloc(mpool_, node->values, node->num_values * sizeof(TreeData*));
+        node->values = mp_realloc(mpool_, node->values, node->num_values * sizeof(TreeData *));
     else
         mp_free(mpool_, node->values), node->values = NULL;
 }
@@ -108,7 +108,7 @@ int remove_subtree_recursive(TreeNode* parent, unsigned int target_id)
 
             parent->num_children--;
             if (parent->num_children > 0)
-                parent->children = mp_realloc(mpool_, parent->children, parent->num_children * sizeof(TreeNode*));
+                parent->children = mp_realloc(mpool_, parent->children, parent->num_children * sizeof(TreeNode *));
             else
                 mp_free(mpool_, parent->children), parent->children = NULL;
 
@@ -144,7 +144,7 @@ TreeNode* find_node(Tree* tree, unsigned int id)
     if (!tree || !tree->root)
         return NULL;
 
-    TreeNode** stack = mp_alloc(mpool_, sizeof(TreeNode*) * 128);
+    TreeNode** stack = mp_alloc(mpool_, sizeof(TreeNode *) * 128);
     int stack_size = 0;
 
     stack[stack_size++] = tree->root;

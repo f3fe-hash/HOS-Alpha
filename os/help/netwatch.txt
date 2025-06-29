@@ -1,0 +1,10 @@
+NETWATCH
+----------------------
+
+Watch a network interface
+
+Usage:
+    netwatch <interface> <max-hosts>
+
+Example:
+    netwatch wlo1 15

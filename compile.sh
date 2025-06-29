@@ -1,16 +1,23 @@
 #!/bin/bash
 
-sudo rm -r os
+clear
+set -e
+
+# Clean up
+sudo rm -rf os .build
 
 mkdir -p .build
 mkdir -p os
 
+# Build your OS
 cd .build
 cmake ..
 make
 cd ..
 
+# Copy OS files to 'os' folder (change if needed)
 cp -r OS/* os/
 cp .build/HOS os/
 
-rm -r .build
+# Cleanup
+#rm -rf .build

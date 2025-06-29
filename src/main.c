@@ -10,7 +10,7 @@
  *
  * returns: 0 on success, non-zero on failure.
  */
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     __argc = argc;
     __argv = argv;
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     // Main loop
     while (1)
     {
-        char *input = readline(prompt_string());
+        char* input = readline(prompt_string());
 
         if (input && *input)
         {
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
  *
  * returns: __null
  */
-void args(int argc, char **argv)
+void args(int argc, char** argv)
 {
     while (true)
     {
@@ -70,7 +70,7 @@ void args(int argc, char **argv)
             HOS_exit(0);
             break;
         case 'p':
-            cmd_setport(optarg);
+            cmd_setport(1, (char**)optarg);
             break;
         case 'g':
             use_gtk = true;
@@ -91,7 +91,6 @@ void args(int argc, char **argv)
 void boot()
 {
     mp_init(mpool_);
-    PROCAPI_init(4);
 
     // Check if program can be run
     if (geteuid() != 0)
@@ -112,10 +111,13 @@ void boot()
     mkdir("lib", 0777);
     mkdir("etc", 0777);
     mkdir("var", 0777);
+    mkdir("etc/htp", 0777);
     newfile(HOSTS);
     newfile(INSTALL_DB);
+    newfile(HTP_PUBLIC_KEY_FILE);
+    newfile(HTP_PRIVATE_KEY_FILE);
     chdir("..");
-    move("help.txt", ".HOS/etc");
+    move("help", ".HOS/etc");
     move("textures", ".HOS/etc");
     chdir(".HOS");
     __ok;
@@ -124,6 +126,10 @@ void boot()
     // Prep libgit2
     git_libgit2_init();
     git_libgit2_opts(GIT_OPT_SET_SEARCH_PATH, "lib");
+
+    // Initialize Store
+    //StoreError* pErr;
+    //store = init_store(pErr, STORE_FILE_BASE);
 
     __clear;
     fflush(stdout);
