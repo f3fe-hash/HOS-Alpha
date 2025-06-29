@@ -3,8 +3,8 @@
 
 #include <gtk/gtk.h>
 #include <cairo.h>
-#include "../../root.h"
-#include "../../types.h"
+#include "root.h"
+#include "types.h"
 
 // Gtk CSS file
 #define GTK_STYLE_CSS        "etc/textures/style.css"

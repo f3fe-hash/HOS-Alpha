@@ -17,6 +17,11 @@ add_executable(HOS ${SOURCE_FILES})
 
 target_compile_definitions(HOS PRIVATE _DEFAULT_SOURCE _POSIX_C_SOURCE=200809L)
 
+target_include_directories(HOS PRIVATE
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src/cJSON
+)
+
 # Link OpenSSL
 find_package(OpenSSL REQUIRED)
 

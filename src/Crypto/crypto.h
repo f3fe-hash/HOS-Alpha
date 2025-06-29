@@ -10,7 +10,7 @@
 #include <openssl/evp.h>
 #include <openssl/err.h>
 
-#include "../root.h"
+#include "root.h"
 
 #define AES_128 128
 #define AES_192 192

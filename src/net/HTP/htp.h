@@ -17,9 +17,9 @@
 #include <openssl/pem.h>
 #include <stdint.h>
 
-#include "../../Crypto/crypto.h"
-#include "../../lib/memory.h"
-#include "../netroot.h"
+#include "Crypto/crypto.h"
+#include "lib/memory.h"
+#include "net/netroot.h"
 
 #define HTP_PUBLIC_KEY_FILE  "etc/htp/public.txt"
 #define HTP_PRIVATE_KEY_FILE "etc/htp/private.txt"

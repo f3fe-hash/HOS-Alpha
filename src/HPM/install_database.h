@@ -1,9 +1,9 @@
 #ifndef __INSTALL_DATABASE_H__
 #define __INSTALL_DATABASE_H__
 
-#include "../cJSON/cJSON.h"
-#include "../root.h"
-#include "../types.h"
+#include "cJSON/cJSON.h"
+#include "root.h"
+#include "types.h"
 
 typedef struct
 {

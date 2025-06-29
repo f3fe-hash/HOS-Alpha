@@ -21,3 +21,6 @@ cp .build/HOS os/
 
 # Cleanup
 #rm -rf .build
+
+set -euo pipefail
+trap 'echo "Error on line $LINENO. Exiting."; exit 1' ERR

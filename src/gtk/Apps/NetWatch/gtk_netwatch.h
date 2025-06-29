@@ -13,7 +13,7 @@
 #include <netinet/ip_icmp.h>
 #include <pthread.h>
 
-#include "../app_base.h"
+#include "gtk/Apps/app_base.h"
 
 #define MAX_IPS 1024
 #define MAX_PORTS 512

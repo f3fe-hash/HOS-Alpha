@@ -1,9 +1,9 @@
 #ifndef __GTK_TERMINAL_H__
 #define __GTK_TERMINAL_H__
 
-#include "../app_base.h"
-#include "../NetWatch/gtk_netwatch.h"
-#include "../../../Commands/cmd_base.h"
+#include "gtk/Apps/app_base.h"
+#include "gtk/Apps/NetWatch/gtk_netwatch.h"
+#include "Commands/cmd_base.h"
 #include <gtk/gtk.h>
 
 /* GTK Terminal Application Structure */

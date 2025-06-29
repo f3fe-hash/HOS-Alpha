@@ -1,8 +1,8 @@
 #ifndef __NETWATCH_H__
 #define __NETWATCH_H__
 
-#include "../netroot.h"
-#include "../ping.h"
+#include "net/netroot.h"
+#include "net/ping.h"
 #include <poll.h>
 #include <time.h>
 #include <math.h>

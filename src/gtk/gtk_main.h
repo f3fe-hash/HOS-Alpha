@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 #include <cairo.h>
 
-#include "../root.h"
+#include "root.h"
 #include "Apps/app_base.h"
 #include "Apps/terminal/gtk_terminal.h"
 #include "Apps/NetWatch/gtk_netwatch.h"

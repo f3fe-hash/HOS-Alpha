@@ -3,23 +3,23 @@
 
 #include <getopt.h>
 
-#include "../root.h"
-#include "../lib/macro.h"
+#include "root.h"
+#include "lib/macro.h"
 
 // HPM headers
-#include "../HPM/hpm.h"
+#include "HPM/hpm.h"
 
 // net headers
-#include "../net/netroot.h"
-#include "../net/netutils.h"
-#include "../net/ping.h"
-#include "../net/NetWatch/netwatch.h"
+#include "net/netroot.h"
+#include "net/netutils.h"
+#include "net/ping.h"
+#include "net/NetWatch/netwatch.h"
 
 // Crypto headers
-#include "../Crypto/crypto.h"
+#include "Crypto/crypto.h"
 
 // GTK
-#include "../gtk/gtk_main.h"
+#include "gtk/gtk_main.h"
 
 #define CMD_RUN_HELP "etc/help/run.txt"
 #define CMD_HPM_HELP "etc/help/hpm.txt"
