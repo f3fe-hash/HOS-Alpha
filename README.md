@@ -1,7 +1,7 @@
 # HOS – Hacker Operating System  
 ⚡ *A modular, C-based Linux framework for hackers and tinkerers.*
 
-**Version**: Alpha 1.2
+**Version**: Alpha 1.2.1
 **Author**: Brian Riff  
 **Release Date**: May 21, 2025  
 
